@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>روز پنجم: تولید محتوای ویدئویی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Violet & Purple -->
+    <!-- Application Structure Plan: A single-page, vertical-scrolling application with a sticky stepper navigation ("Anatomy", "Workshop", "Tools"). This structure guides the user through understanding video prompt components, applying them in a hands-on workshop, and discovering relevant tools, breaking down a complex topic into manageable steps. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: The components of a video prompt (Scene, Action, Camera, etc.). Goal: Inform & Organize. Viz/Presentation Method: An interactive grid of "flipping" cards (HTML/CSS/JS). Interaction: Clicking a card flips it to reveal a detailed explanation. Justification: This "discovery" model is effective for learning individual components before combining them.
+        - Report Info: The process of building a multi-scene video prompt. Goal: Demonstrate a process & Engage. Viz/Presentation Method: An "Interactive Storyboard to Prompt" builder. Interaction: Users select actions for three consecutive scenes from dropdowns. The app generates a sequential text prompt and a simple visual "storyboard" using text and icons. Justification: This makes the abstract concept of storytelling and sequencing in video prompts tangible and easy to understand, showing how to structure a prompt for a short narrative arc.
+        - Report Info: List of 10 video generation tools. Goal: Organize & Inform. Viz/Presentation Method: A filterable grid of tool cards. Interaction: Users can filter tools by type ('Text-to-Video', 'Image-to-Video', 'Avatar'). Justification: Adds practical utility, helping users find the right tool for their specific video generation need.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f5f3ff; /* violet-50 */
+            color: #3730a3; /* indigo-900 */
+            scroll-behavior: smooth;
+        }
+        .stepper-item.active .stepper-circle {
+            background-color: #7c3aed; /* violet-600 */
+            color: white;
+            font-weight: bold;
+            transform: scale(1.1);
+        }
+        .stepper-item.active .stepper-label {
+            color: #7c3aed; /* violet-600 */
+            font-weight: 700;
+        }
+        .stepper-line {
+            height: 2px;
+            background-color: #ddd6fe; /* violet-200 */
+        }
+        .card-flip {
+            perspective: 1000px;
+        }
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.75rem;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        .tool-card {
+            transition: all 0.3s ease;
+        }
+        .tool-card.hidden {
+            transform: scale(0.9);
+            opacity: 0;
+            width: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        .storyboard-arrow {
+            font-size: 2rem;
+            color: #a78bfa; /* violet-400 */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Stepper Navigation -->
+    <header class="sticky top-0 z-20 bg-white/80 backdrop-blur-md shadow-sm p-4">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-center text-2xl font-extrabold text-violet-800 mb-4">روز پنجم: تولید محتوای ویدئویی</h1>
+            <div id="stepper-nav" class="flex justify-between items-center">
+                <a href="#anatomy" class="stepper-item flex-1 text-center" data-section="1">
+                    <div class="stepper-circle w-10 h-10 mx-auto rounded-full bg-violet-200 flex items-center justify-center text-lg font-bold text-violet-600 transition-all duration-300">۱</div>
+                    <p class="stepper-label text-sm mt-2 font-semibold text-violet-500 transition-colors duration-300">آناتومی پرامپت</p>
+                </a>
+                <div class="stepper-line flex-1"></div>
+                <a href="#workshop" class="stepper-item flex-1 text-center" data-section="2">
+                    <div class="stepper-circle w-10 h-10 mx-auto rounded-full bg-violet-200 flex items-center justify-center text-lg font-bold text-violet-600 transition-all duration-300">۲</div>
+                    <p class="stepper-label text-sm mt-2 font-semibold text-violet-500 transition-colors duration-300">کارگاه ساخت</p>
+                </a>
+                <div class="stepper-line flex-1"></div>
+                <a href="#tools" class="stepper-item flex-1 text-center" data-section="3">
+                    <div class="stepper-circle w-10 h-10 mx-auto rounded-full bg-violet-200 flex items-center justify-center text-lg font-bold text-violet-600 transition-all duration-300">۳</div>
+                    <p class="stepper-label text-sm mt-2 font-semibold text-violet-500 transition-colors duration-300">جعبه ابزار</p>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto p-4 md:p-8">
+
+        <!-- Introduction -->
+        <section id="intro" class="text-center mb-16">
+            <h2 class="text-4xl font-extrabold text-violet-800">کارگردانی با کلمات</h2>
+            <p class="mt-4 text-lg text-violet-600 max-w-3xl mx-auto">امروز در نقش یک کارگردان ظاهر می‌شویم و یاد می‌گیریم چگونه صحنه‌ها، حرکات و داستان‌ها را برای هوش مصنوعی توصیف کنیم تا برای ما ویدئو بسازد. این حوزه به سرعت در حال پیشرفت است و یادگیری اصول آن یک مزیت بزرگ است.</p>
+        </section>
+        
+        <!-- Section 1: Anatomy of a Prompt -->
+        <section id="anatomy" class="mb-16 pt-20 -mt-20">
+            <h3 class="text-3xl font-bold text-center mb-8 text-violet-800">آناتومی یک پرامپت ویدئو: روی هر کارت کلیک کنید</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                <!-- Anatomy cards will be injected by JS -->
+            </div>
+        </section>
+
+        <!-- Section 2: Workshop -->
+        <section id="workshop" class="mb-16 pt-20 -mt-20">
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl border border-violet-200">
+                <h3 class="text-3xl font-bold text-center mb-2 text-violet-800">کارگاه تعاملی: از استوری‌بورد تا پرامپت</h3>
+                <p class="text-center text-violet-600 mb-8 max-w-3xl mx-auto">ویدئو یعنی روایت یک داستان کوتاه. با انتخاب کنش‌ها در سه صحنه زیر، یک استوری‌بورد ساده بسازید و ببینید چگونه به یک پرامپت ویدئویی منسجم تبدیل می‌شود.</p>
+                
+                <div class="bg-violet-50 p-6 rounded-lg border border-violet-200">
+                    <!-- Storyboard Visual -->
+                    <h4 class="text-lg font-bold text-violet-700 mb-4 text-center">استوری‌بورد بصری</h4>
+                    <div class="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
+                        <div id="storyboard-card-1" class="w-28 h-28 md:w-36 md:h-36 bg-white rounded-lg p-2 text-center flex flex-col justify-center items-center shadow"></div>
+                        <div class="storyboard-arrow hidden md:block">➔</div>
+                        <div id="storyboard-card-2" class="w-28 h-28 md:w-36 md:h-36 bg-white rounded-lg p-2 text-center flex flex-col justify-center items-center shadow"></div>
+                        <div class="storyboard-arrow hidden md:block">➔</div>
+                        <div id="storyboard-card-3" class="w-28 h-28 md:w-36 md:h-36 bg-white rounded-lg p-2 text-center flex flex-col justify-center items-center shadow"></div>
+                    </div>
+
+                    <!-- Storyboard Controls -->
+                    <div class="grid md:grid-cols-3 gap-4 mt-8">
+                        <div>
+                            <label for="scene1" class="block text-sm font-bold text-violet-700 mb-1">صحنه ۱:</label>
+                            <select id="scene1" class="storyboard-select w-full p-2 border border-violet-300 rounded-lg bg-white">
+                                <option value="a drone shot flying over a futuristic city at night" data-icon="🏙️">پرواز پهپاد بر فراز شهر آینده‌نگر</option>
+                                <option value="a robot walks on a sandy beach" data-icon="�">ربات در ساحل راه می‌رود</option>
+                                <option value="a single leaf falling from a tree in autumn" data-icon="🍁">برگی از درخت می‌افتد</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="scene2" class="block text-sm font-bold text-violet-700 mb-1">صحنه ۲:</label>
+                            <select id="scene2" class="storyboard-select w-full p-2 border border-violet-300 rounded-lg bg-white">
+                                <option value="camera zooms in on a neon sign" data-icon="💡">زوم روی یک تابلوی نئونی</option>
+                                <option value="the robot looks at the sunset" data-icon="🌅">ربات به غروب نگاه می‌کند</option>
+                                <option value="the leaf lands gently on the surface of a pond" data-icon="💧">برگ روی آب می‌نشیند</option>
+                            </select>
+                        </div>
+                        <div>
+                           <label for="scene3" class="block text-sm font-bold text-violet-700 mb-1">صحنه ۳:</label>
+                            <select id="scene3" class="storyboard-select w-full p-2 border border-violet-300 rounded-lg bg-white">
+                                <option value="rain begins to fall on the wet streets" data-icon="🌧️">باران شروع به باریدن می‌کند</option>
+                                <option value="a small wave washes over the robot's feet" data-icon="🌊">موجی پای ربات را می‌شوید</option>
+                                <option value="creating ripples that expand outwards" data-icon="⭕">امواجی روی آب ایجاد می‌شود</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Prompt Output -->
+                 <div class="mt-8">
+                    <h4 class="text-xl font-bold text-violet-700 mb-3">پرامپت ویدئویی تولید شده:</h4>
+                    <p id="video-prompt-output" class="text-md leading-relaxed p-4 bg-slate-800 text-slate-100 rounded-lg font-mono"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Tools -->
+        <section id="tools" class="pt-20 -mt-20">
+             <div class="text-center mb-8">
+                <h2 class="text-4xl font-extrabold text-violet-800">جعبه ابزار کارگردان</h2>
+                <p class="mt-4 text-lg text-violet-600">در اینجا ۱۰ ابزار برای ساخت ویدئو معرفی شده‌اند. می‌توانید بر اساس نیاز خود آنها را فیلتر کنید.</p>
+            </div>
+            <div id="tool-filters" class="flex justify-center gap-2 mb-8 flex-wrap">
+                <button class="tool-filter-btn tab-button border-b-2 px-4 py-2 text-md font-semibold text-violet-600 transition-all duration-300 active" data-filter="all">همه</button>
+                <button class="tool-filter-btn tab-button border-b-2 px-4 py-2 text-md font-semibold text-violet-600 transition-all duration-300" data-filter="t2v">متن به ویدئو (T2V)</button>
+                <button class="tool-filter-btn tab-button border-b-2 px-4 py-2 text-md font-semibold text-violet-600 transition-all duration-300" data-filter="i2v">عکس به ویدئو (I2V)</button>
+                <button class="tool-filter-btn tab-button border-b-2 px-4 py-2 text-md font-semibold text-violet-600 transition-all duration-300" data-filter="avatar">آواتار سخنگو</button>
+            </div>
+            <div id="tool-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Tool cards will be injected by JS -->
+            </div>
+        </section>
+
+    </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // --- Data ---
+    const anatomyData = [
+        { key: 'توصیف صحنه', desc: 'محیط و اتمسفر را توصیف کنید. (مثال: "a futuristic city at night")' },
+        { key: 'کنش کاراکتر', desc: 'شخصیت یا موضوع اصلی چه کاری انجام می‌دهد؟ (مثال: "a robot is walking")' },
+        { key: 'حرکت دوربین', desc: 'دوربین چگونه حرکت کند؟ (مثال: "camera pans left, zoom in slowly")' },
+        { key: 'سبک بصری', desc: 'سبک ویدئو چگونه باشد؟ (مثال: "cinematic, 4k, hyperrealistic")' },
+        { key: 'انسجام', desc: 'برای حفظ یکپارچگی بین صحنه‌ها، از توصیفات تکراری استفاده کنید.' }
+    ];
+
+    const toolsData = [
+        { name: "RunwayML (Gen-2)", desc: "یکی از پیشگامان و قدرتمندترین ابزارهای Text-to-Video.", category: "t2v" },
+        { name: "Pika Labs", desc: "ابزاری بسیار محبوب با طرح رایگان برای تولید و ویرایش ویدئو.", category: "t2v" },
+        { name: "Luma Labs (Dream Machine)", desc: "جدیدترین و یکی از باکیفیت‌ترین مدل‌های تولید ویدئو.", category: "t2v" },
+        { name: "InVideo AI", desc: "ساخت ویدئوهای کامل با صداگذاری از روی یک پرامپت.", category: "t2v" },
+        { name: "Kaiber.ai", desc: "ابزارهای خلاقانه برای ساخت ویدئوهای هنری و موزیک ویدئو.", category: "i2v" },
+        { name: "HeyGen", desc: "ساخت آواتارهای سخنگو از روی متن.", category: "avatar" },
+        { name: "D-ID", desc: "جان بخشیدن به تصاویر ثابت و ساخت ویدئوهای سخنگو.", category: "i2v" },
+        { name: "Veed.io", desc: "یک ویرایشگر ویدئوی آنلاین با ابزارهای هوش مصنوعی متنوع.", category: "i2v" },
+        { name: "Fliki", desc: "تبدیل متن وبلاگ به ویدئو با صداگذاری هوشمند.", category: "avatar" },
+        { name: "Stable Video Diffusion", desc: "مدل متن باز از Stability AI.", category: "t2v" }
+    ];
+
+    // --- Section 1: Anatomy ---
+    const anatomyContainer = document.querySelector('#anatomy .grid');
+    anatomyData.forEach(item => {
+        const cardHTML = `
+            <div class="card-flip h-32 cursor-pointer group">
+                <div class="card-flip-inner">
+                    <div class="card-face card-front bg-white shadow-md border border-violet-200 group-hover:shadow-lg transition-shadow">
+                        <span class="text-xl font-bold text-violet-600">${item.key}</span>
+                    </div>
+                    <div class="card-face card-back bg-violet-600 text-white p-3 text-center">
+                        <p class="text-sm font-semibold">${item.desc}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        anatomyContainer.innerHTML += cardHTML;
+    });
+
+    document.querySelectorAll('.card-flip').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+        });
+    });
+
+    // --- Section 2: Workshop ---
+    const selectors = document.querySelectorAll('.storyboard-select');
+    const promptOutput = document.getElementById('video-prompt-output');
+    
+    function generateVideoPrompt() {
+        const parts = [];
+        selectors.forEach((select, index) => {
+            const selectedOption = select.options[select.selectedIndex];
+            parts.push(selectedOption.value);
+            
+            const card = document.getElementById(`storyboard-card-${index + 1}`);
+            card.innerHTML = `<span class="text-4xl">${selectedOption.dataset.icon}</span><p class="text-xs mt-2 font-semibold text-violet-700">${selectedOption.textContent}</p>`;
+        });
+        
+        // Joining with an arrow to show sequence
+        promptOutput.textContent = parts.join(' --> ');
+    }
+    
+    selectors.forEach(selector => selector.addEventListener('change', generateVideoPrompt));
+
+    // --- Section 3: Tools ---
+    const toolGrid = document.getElementById('tool-grid');
+    const toolFilters = document.getElementById('tool-filters');
+
+    toolsData.forEach(tool => {
+        const card = document.createElement('div');
+        card.className = 'tool-card bg-white rounded-lg p-4 shadow-sm border border-violet-200 hover:shadow-md hover:border-violet-300';
+        card.dataset.category = tool.category;
+        card.innerHTML = `
+            <h5 class="font-bold text-violet-700">${tool.name}</h5>
+            <p class="text-sm text-slate-500 mt-1">${tool.desc}</p>
+        `;
+        toolGrid.appendChild(card);
+    });
+
+    toolFilters.addEventListener('click', (e) => {
+        if (e.target.matches('.tool-filter-btn')) {
+            const filter = e.target.dataset.filter;
+            
+            document.querySelectorAll('#tool-filters .tool-filter-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+
+            document.querySelectorAll('.tool-card').forEach(card => {
+                if (filter === 'all' || card.dataset.category === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+    });
+
+    // --- Stepper Navigation ---
+    const sections = document.querySelectorAll('main section');
+    const stepperItems = document.querySelectorAll('.stepper-item');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const sectionId = entry.target.id;
+                let activeSection = '1';
+                if (sectionId === 'workshop') activeSection = '2';
+                else if (sectionId === 'tools') activeSection = '3';
+                else if (sectionId === 'anatomy') activeSection = '1';
+                
+                stepperItems.forEach(item => {
+                    item.classList.toggle('active', item.dataset.section === activeSection);
+                });
+            }
+        });
+    }, { rootMargin: "-40% 0px -60% 0px" });
+
+    sections.forEach(section => observer.observe(section));
+
+    // --- Initializations ---
+    generateVideoPrompt();
+});
+</script>
+</body>
+</html>
+�

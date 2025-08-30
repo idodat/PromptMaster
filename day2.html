@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>روز دوم: تولید محتوای متنی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Stone & Amber -->
+    <!-- Application Structure Plan: A single-page, vertical-scrolling lesson with a sticky stepper navigation for the three core workshops (Article, Story, Email) and a final tool showcase. This task-oriented structure allows users to dive deep into each content type. Instead of one complex visualization, the application uses multiple, focused interactive components (a step-by-step article prompt builder, a dynamic story idea generator, and a structured email prompt composer) to provide a hands-on learning experience for each specific task. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Steps for writing a blog post (outline, intro, body, etc.). Goal: Demonstrate a process. Viz/Presentation Method: An interactive, step-by-step "Article Prompt Builder" using HTML/CSS/JS. Interaction: Users click "Next Step" to reveal the prompt for each part of an article, from title to conclusion. Justification: This makes the abstract process of deconstructing a writing task into sub-prompts a concrete and guided activity.
+        - Report Info: Creating a story (genre, character, etc.). Goal: Engage & Organize. Viz/Presentation Method: A "Story Idea Generator" with dropdown menus (HTML/JS). Interaction: Users select a genre, character, and setting, and a tailored story prompt is dynamically generated. Justification: This gamified approach effectively teaches how different parameters combine to form a creative prompt.
+        - Report Info: Writing professional emails. Goal: Inform & Organize. Viz/Presentation Method: A structured form-based "Email Prompt Composer" (HTML/JS). Interaction: Users fill in fields (To, Goal, Points), and a complete, professional email prompt is generated. Justification: This demonstrates how to provide structured data to the AI for highly specific, formal writing tasks.
+        - Report Info: List of 10 writing tools. Goal: Organize & Inform. Viz/Presentation Method: A filterable grid of tool cards (HTML/JS). Interaction: Users can filter tools by category ('Blogging', 'Creative', 'Business'). Justification: This adds a layer of utility, helping users find the right tool for their specific need, making the list more practical than a static one.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #292524; /* stone-800 */
+            scroll-behavior: smooth;
+        }
+        .stepper-item.active .stepper-circle {
+            background-color: #0891b2; /* cyan-600 */
+            color: white;
+            font-weight: bold;
+            transform: scale(1.1);
+        }
+        .stepper-item.active .stepper-label {
+            color: #0891b2; /* cyan-600 */
+            font-weight: 700;
+        }
+        .stepper-line {
+            height: 2px;
+            background-color: #d6d3d1; /* stone-300 */
+        }
+        .tab-button.active {
+            border-color: #0891b2;
+            color: #0e7490;
+            background-color: #cffafe;
+        }
+        .tool-card {
+            transition: all 0.3s ease;
+        }
+        .tool-card.hidden {
+            transform: scale(0.9);
+            opacity: 0;
+            width: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Stepper Navigation -->
+    <header class="sticky top-0 z-20 bg-white/80 backdrop-blur-md shadow-sm p-4">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-center text-2xl font-extrabold text-stone-800 mb-4">روز دوم: تولید محتوای متنی</h1>
+            <div id="stepper-nav" class="flex justify-between items-center">
+                <a href="#workshop1" class="stepper-item flex-1 text-center" data-section="1">
+                    <div class="stepper-circle w-10 h-10 mx-auto rounded-full bg-stone-200 flex items-center justify-center text-lg font-bold text-stone-600 transition-all duration-300">۱</div>
+                    <p class="stepper-label text-sm mt-2 font-semibold text-stone-500 transition-colors duration-300">کارگاه مقاله</p>
+                </a>
+                <div class="stepper-line flex-1"></div>
+                <a href="#workshop2" class="stepper-item flex-1 text-center" data-section="2">
+                    <div class="stepper-circle w-10 h-10 mx-auto rounded-full bg-stone-200 flex items-center justify-center text-lg font-bold text-stone-600 transition-all duration-300">۲</div>
+                    <p class="stepper-label text-sm mt-2 font-semibold text-stone-500 transition-colors duration-300">کارگاه داستان</p>
+                </a>
+                <div class="stepper-line flex-1"></div>
+                <a href="#workshop3" class="stepper-item flex-1 text-center" data-section="3">
+                    <div class="stepper-circle w-10 h-10 mx-auto rounded-full bg-stone-200 flex items-center justify-center text-lg font-bold text-stone-600 transition-all duration-300">۳</div>
+                    <p class="stepper-label text-sm mt-2 font-semibold text-stone-500 transition-colors duration-300">کارگاه ایمیل</p>
+                </a>
+                 <div class="stepper-line flex-1"></div>
+                <a href="#tools" class="stepper-item flex-1 text-center" data-section="4">
+                    <div class="stepper-circle w-10 h-10 mx-auto rounded-full bg-stone-200 flex items-center justify-center text-lg font-bold text-stone-600 transition-all duration-300">۴</div>
+                    <p class="stepper-label text-sm mt-2 font-semibold text-stone-500 transition-colors duration-300">جعبه ابزار</p>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto p-4 md:p-8">
+
+        <!-- Introduction -->
+        <section id="intro" class="text-center mb-16">
+            <h2 class="text-4xl font-extrabold text-stone-800">از ایده تا اجرا با کلمات</h2>
+            <p class="mt-4 text-lg text-stone-600 max-w-3xl mx-auto">امروز یاد می‌گیریم چگونه برای نوشتن مقالات حرفه‌ای، داستان‌های جذاب و ایمیل‌های کاری بی‌نقص، پرامپت بنویسیم. در هر کارگاه، یک پروژه را با هم از صفر می‌سازیم.</p>
+        </section>
+
+        <!-- Workshop 1: Article Writing -->
+        <section id="workshop1" class="mb-16 pt-20 -mt-20">
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl border border-stone-200">
+                <h3 class="text-3xl font-bold text-center mb-2 text-cyan-800">کارگاه ۱: ساختار یک مقاله وبلاگ</h3>
+                <p class="text-center text-stone-600 mb-8 max-w-2xl mx-auto">یک مقاله خوب، تکه‌تکه ساخته می‌شود. در این کارگاه تعاملی، یاد می‌گیریم چگونه برای هر بخش از مقاله (عنوان، طرح کلی، مقدمه و...) یک پرامپت جداگانه و مؤثر بنویسیم. موضوع ما: **فواید مدیتیشن برای کاهش استرس**. </p>
+                
+                <div id="article-steps" class="flex flex-col md:flex-row items-center justify-center gap-2 mb-8">
+                    <!-- Step buttons will be injected here -->
+                </div>
+                
+                <div class="bg-stone-50 p-6 rounded-lg min-h-[150px] text-stone-700 border border-stone-200">
+                    <h4 id="article-prompt-title" class="text-xl font-bold text-cyan-700 mb-3"></h4>
+                    <p id="article-prompt-output" class="text-md leading-relaxed whitespace-pre-wrap"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Workshop 2: Story Writing -->
+        <section id="workshop2" class="mb-16 pt-20 -mt-20">
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl border border-stone-200">
+                <h3 class="text-3xl font-bold text-center mb-2 text-cyan-800">کارگاه ۲: ژنراتور ایده داستان</h3>
+                <p class="text-center text-stone-600 mb-8 max-w-2xl mx-auto">برای نوشتن یک داستان، ابتدا به یک ایده اولیه نیاز داریم. با انتخاب گزینه‌های زیر، ببینید چگونه یک پرامپت داستانی کامل و خلاقانه به صورت خودکار ساخته می‌شود.</p>
+                
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label for="story-genre" class="block text-sm font-bold text-stone-700 mb-1">ژانر:</label>
+                        <select id="story-genre" class="w-full p-2 border border-stone-300 rounded-lg bg-white">
+                            <option value="علمی-تخیلی">علمی-تخیلی</option>
+                            <option value="فانتزی">فانتزی</option>
+                            <option value="جنایی">جنایی (نوآر)</option>
+                            <option value="ماجراجویی">ماجراجویی</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="story-character" class="block text-sm font-bold text-stone-700 mb-1">شخصیت اصلی:</label>
+                        <select id="story-character" class="w-full p-2 border border-stone-300 rounded-lg bg-white">
+                            <option value="یک کارآگاه خسته">یک کارآگاه خسته</option>
+                            <option value="یک ربات دارای احساسات">یک ربات دارای احساسات</option>
+                            <option value="یک جادوگر جوان و بی‌تجربه">یک جادوگر جوان و بی‌تجربه</option>
+                            <option value="یک کاشف گنج">یک کاشف گنج</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="story-setting" class="block text-sm font-bold text-stone-700 mb-1">مکان داستان:</label>
+                        <select id="story-setting" class="w-full p-2 border border-stone-300 rounded-lg bg-white">
+                            <option value="در یک شهر بارانی و نئونی در سال ۲۰۷۷">در یک شهر بارانی و نئونی در سال ۲۰۷۷</option>
+                            <option value="در یک جنگل باستانی و فراموش‌شده">در یک جنگل باستانی و فراموش‌شده</option>
+                            <option value="در خرابه‌های یک معبد گمشده">در خرابه‌های یک معبد گمشده</option>
+                            <option value="در یک کتابخانه اسرارآمیز">در یک کتابخانه اسرارآمیز</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-stone-50 p-6 rounded-lg min-h-[150px] text-stone-700 border border-stone-200">
+                    <h4 class="text-xl font-bold text-cyan-700 mb-3">پرامپت تولید شده برای داستان شما:</h4>
+                    <p id="story-prompt-output" class="text-md leading-relaxed"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Workshop 3: Email Writing -->
+        <section id="workshop3" class="mb-16 pt-20 -mt-20">
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl border border-stone-200">
+                <h3 class="text-3xl font-bold text-center mb-2 text-cyan-800">کارگاه ۳: ساخت پرامپت ایمیل حرفه‌ای</h3>
+                 <p class="text-center text-stone-600 mb-8 max-w-2xl mx-auto">برای نوشتن یک ایمیل کاری، باید اطلاعات را به صورت ساختاریافته به هوش مصنوعی بدهیم. فرم زیر را پر کرده و ببینید چگونه به یک پرامپت دقیق برای نوشتن ایمیل تبدیل می‌شود.</p>
+
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <input type="text" id="email-recipient" placeholder="گیرنده (مثال: مدیر بازاریابی)" class="w-full p-2 border border-stone-300 rounded-lg">
+                    <input type="text" id="email-goal" placeholder="هدف ایمیل (مثال: درخواست جلسه برای بررسی کمپین)" class="w-full p-2 border border-stone-300 rounded-lg">
+                </div>
+                <textarea id="email-points" rows="3" placeholder="نکات کلیدی که باید ذکر شود (هر نکته در یک خط)..." class="w-full p-2 border border-stone-300 rounded-lg mb-4"></textarea>
+                <button id="email-generate-btn" class="w-full bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-cyan-700 transition-colors duration-300">ساخت پرامپت ایمیل</button>
+
+                <div id="email-prompt-container" class="bg-stone-50 p-6 mt-6 rounded-lg text-stone-700 border border-stone-200 hidden">
+                    <h4 class="text-xl font-bold text-cyan-700 mb-3">پرامپت تولید شده برای ایمیل:</h4>
+                    <p id="email-prompt-output" class="text-md leading-relaxed whitespace-pre-wrap"></p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tools Section -->
+        <section id="tools" class="pt-20 -mt-20">
+             <div class="text-center mb-8">
+                <h2 class="text-4xl font-extrabold text-stone-800">جعبه ابزار نویسنده</h2>
+                <p class="mt-4 text-lg text-stone-600">در اینجا ۱۰ ابزار قدرتمند برای تولید محتوای متنی معرفی شده‌اند. با کلیک بر روی دسته‌بندی‌ها، ابزارهای مرتبط را فیلتر کنید.</p>
+            </div>
+            <div id="tool-filters" class="flex justify-center gap-2 mb-8 flex-wrap">
+                <button class="tool-filter-btn tab-button border-b-2 px-4 py-2 text-md font-semibold text-stone-600 transition-all duration-300 active" data-filter="all">همه</button>
+                <button class="tool-filter-btn tab-button border-b-2 px-4 py-2 text-md font-semibold text-stone-600 transition-all duration-300" data-filter="blogging">مقاله و وبلاگ</button>
+                <button class="tool-filter-btn tab-button border-b-2 px-4 py-2 text-md font-semibold text-stone-600 transition-all duration-300" data-filter="creative">نویسندگی خلاق</button>
+                <button class="tool-filter-btn tab-button border-b-2 px-4 py-2 text-md font-semibold text-stone-600 transition-all duration-300" data-filter="business">کاری و رسمی</button>
+            </div>
+            <div id="tool-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Tool cards will be injected by JS -->
+            </div>
+        </section>
+
+    </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // --- Data ---
+    const articlePrompts = [
+        { title: 'قدم ۱: درخواست ۵ ایده برای عنوان', prompt: 'تو یک متخصص سئو و کپی‌رایتر هستی. برای یک مقاله وبلاگ با موضوع "فواید مدیتیشن برای کاهش استرس"، ۵ عنوان جذاب و کاربرپسند پیشنهاد بده که پتانسیل رتبه گرفتن در گوگل را داشته باشند.' },
+        { title: 'قدم ۲: درخواست طرح کلی (Outline)', prompt: 'با فرض انتخاب عنوان "چگونه مدیتیشن روزانه استرس شما را متحول می‌کند؟"، یک طرح کلی (Outline) کامل برای این مقاله بنویس. شامل مقدمه، بدنه اصلی (حداقل ۳ بخش اصلی با زیرمجموعه) و نتیجه‌گیری باشد.' },
+        { title: 'قدم ۳: نوشتن مقدمه جذاب', prompt: 'بر اساس طرح کلی قبلی، یک مقدمه جذاب و گیرا (حدود ۱۰۰ کلمه) بنویس. این مقدمه باید با یک قلاب (Hook) قوی شروع شود، مشکل (استرس) را بیان کند و به خواننده قول دهد که راه حل (مدیتیشن) را در ادامه مقاله پیدا خواهد کرد.' },
+        { title: 'قدم ۴: نوشتن یک بخش از بدنه', prompt: 'حالا بخش اول بدنه مقاله با عنوان "مدیتیشن چگونه بر روی مغز و هورمون‌ها تاثیر می‌گذارد؟" را بنویس. (حدود ۱۵۰ کلمه). از زبانی ساده و علمی استفاده کن و به مفاهیمی مانند کورتیزول و آمیگدال اشاره کن.' },
+        { title: 'قدم ۵: نوشتن نتیجه‌گیری و دعوت به اقدام', prompt: 'در نهایت، یک نتیجه‌گیری قدرتمند برای کل مقاله بنویس. نکات کلیدی را به طور خلاصه مرور کن و با یک "دعوت به اقدام" (Call to Action) مشخص، خواننده را تشویق کن که اولین قدم برای شروع مدیتیشن را بردارد.' }
+    ];
+    
+    const toolsData = [
+        { name: "Rytr.me", desc: "ارائه قالب‌های متنوع برای تولید محتوا با طرح رایگان.", category: "blogging" },
+        { name: "Copy.ai", desc: "ابزارهای متنوع برای بازاریابان و تولیدکنندگان محتوا.", category: "business" },
+        { name: "Jasper", desc: "یکی از قوی‌ترین ابزارهای کپی‌رایتینگ (دارای دوره آزمایشی).", category: "blogging" },
+        { name: "Notion AI", desc: "دستیار هوش مصنوعی در محیط یادداشت‌برداری Notion.", category: "business" },
+        { name: "Sudowrite", desc: "ابزاری تخصصی برای نویسندگان داستان و رمان.", category: "creative" },
+        { name: "HyperWrite", desc: "دستیار نوشتن برای ایمیل، مقاله و...", category: "business" },
+        { name: "Simplified", desc: "پلتفرمی با چندین ابزار از جمله نویسنده هوش مصنوعی.", category: "blogging" },
+        { name: "ShortlyAI", desc: "تمرکز بر نوشتن خلاقانه و بدون حواس‌پرتی.", category: "creative" },
+        { name: "Grammarly", desc: "علاوه بر ویرایش، قابلیت‌های نوشتاری هوشمند نیز دارد.", category: "business" },
+        { name: "Hemingway Editor", desc: "برای ساده‌سازی و خواناتر کردن متون.", category: "blogging" }
+    ];
+
+    // --- Workshop 1: Article ---
+    const articleStepsContainer = document.getElementById('article-steps');
+    const articlePromptTitle = document.getElementById('article-prompt-title');
+    const articlePromptOutput = document.getElementById('article-prompt-output');
+    
+    articlePrompts.forEach((step, index) => {
+        const button = document.createElement('button');
+        button.className = 'tab-button border-b-2 px-4 py-2 text-sm font-semibold text-stone-600 transition-all duration-300';
+        button.textContent = `قدم ${index + 1}`;
+        button.dataset.index = index;
+        if (index === 0) button.classList.add('active');
+        articleStepsContainer.appendChild(button);
+    });
+
+    function displayArticlePrompt(index) {
+        articlePromptTitle.textContent = articlePrompts[index].title;
+        articlePromptOutput.textContent = articlePrompts[index].prompt;
+        document.querySelectorAll('#article-steps .tab-button').forEach(btn => {
+            btn.classList.toggle('active', parseInt(btn.dataset.index) === index);
+        });
+    }
+
+    articleStepsContainer.addEventListener('click', (e) => {
+        if (e.target.matches('.tab-button')) {
+            displayArticlePrompt(parseInt(e.target.dataset.index));
+        }
+    });
+
+    // --- Workshop 2: Story ---
+    const storyGenre = document.getElementById('story-genre');
+    const storyCharacter = document.getElementById('story-character');
+    const storySetting = document.getElementById('story-setting');
+    const storyPromptOutput = document.getElementById('story-prompt-output');
+
+    function generateStoryPrompt() {
+        const prompt = `تو یک نویسنده داستان‌های کوتاه هستی. با لحنی مرموز و جذاب، یک صحنه کوتاه (حدود ۱۵۰ کلمه) در ژانر ${storyGenre.value} بنویس.
+شخصیت اصلی داستان ${storyCharacter.value} است که ${storySetting.value}.
+داستان را با توصیف اتمسفر و حال و هوای مکان شروع کن و با یک اتفاق یا دیالوگ غیرمنتظره به پایان برسان.`;
+        storyPromptOutput.textContent = prompt;
+    }
+    [storyGenre, storyCharacter, storySetting].forEach(el => el.addEventListener('change', generateStoryPrompt));
+
+    // --- Workshop 3: Email ---
+    const emailRecipient = document.getElementById('email-recipient');
+    const emailGoal = document.getElementById('email-goal');
+    const emailPoints = document.getElementById('email-points');
+    const emailGenerateBtn = document.getElementById('email-generate-btn');
+    const emailPromptContainer = document.getElementById('email-prompt-container');
+    const emailPromptOutput = document.getElementById('email-prompt-output');
+
+    emailGenerateBtn.addEventListener('click', () => {
+        const points = emailPoints.value.split('\n').filter(p => p.trim() !== '').map(p => `- ${p.trim()}`).join('\n');
+        if(!emailRecipient.value || !emailGoal.value || !points) {
+            alert('لطفاً تمام فیلدها را پر کنید.');
+            return;
+        }
+        const prompt = `تو یک دستیار حرفه‌ای برای نوشتن ایمیل‌های کاری هستی.
+یک ایمیل کاملاً رسمی و مودبانه با لحنی مستقیم و کارآمد بنویس.
+گیرنده: ${emailRecipient.value}
+هدف اصلی ایمیل: ${emailGoal.value}
+نکات کلیدی که باید در بدنه ایمیل گنجانده شود:
+${points}
+
+ایمیل باید دارای یک عنوان (Subject) واضح، یک پاراگراف مقدمه، یک بدنه اصلی برای بیان نکات، و یک پاراگراف پایانی همراه با دعوت به اقدام (Call to Action) مشخص باشد.`;
+        emailPromptOutput.textContent = prompt;
+        emailPromptContainer.classList.remove('hidden');
+    });
+
+    // --- Tools Section ---
+    const toolGrid = document.getElementById('tool-grid');
+    const toolFilters = document.getElementById('tool-filters');
+
+    toolsData.forEach(tool => {
+        const card = document.createElement('div');
+        card.className = 'tool-card bg-white rounded-lg p-4 shadow-sm border border-stone-200 hover:shadow-md hover:border-cyan-300';
+        card.dataset.category = tool.category;
+        card.innerHTML = `
+            <h5 class="font-bold text-cyan-700">${tool.name}</h5>
+            <p class="text-sm text-stone-500 mt-1">${tool.desc}</p>
+        `;
+        toolGrid.appendChild(card);
+    });
+
+    toolFilters.addEventListener('click', (e) => {
+        if (e.target.matches('.tool-filter-btn')) {
+            const filter = e.target.dataset.filter;
+            
+            document.querySelectorAll('.tool-filter-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+
+            document.querySelectorAll('.tool-card').forEach(card => {
+                if (filter === 'all' || card.dataset.category === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+    });
+
+
+    // --- Stepper Navigation ---
+    const sections = document.querySelectorAll('main section');
+    const stepperItems = document.querySelectorAll('.stepper-item');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const sectionId = entry.target.id;
+                let activeSection = '1';
+                if (sectionId.includes('workshop2')) activeSection = '2';
+                else if (sectionId.includes('workshop3')) activeSection = '3';
+                else if (sectionId.includes('tools')) activeSection = '4';
+                else if (sectionId.includes('workshop1')) activeSection = '1';
+
+                stepperItems.forEach(item => {
+                    item.classList.toggle('active', item.dataset.section === activeSection);
+                });
+            }
+        });
+    }, { rootMargin: "-40% 0px -60% 0px" });
+
+    sections.forEach(section => observer.observe(section));
+
+    // --- Initializations ---
+    displayArticlePrompt(0);
+    generateStoryPrompt();
+});
+</script>
+</body>
+</html>

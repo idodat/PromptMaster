@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>روز اول: مبانی پرامپت‌نویسی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Stone & Amber -->
+    <!-- Application Structure Plan: A single-page, vertical-scrolling application structured as an interactive learning journey. A sticky top navigation bar with a stepper acts as a progress tracker and a quick navigation tool, allowing users to jump between the three hours of the lesson. This structure is more fluid and engaging than tabs, turning a static document into a guided experience. Key concepts are presented in interactive cards and visualizations to improve comprehension and retention. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: The concept of improving a prompt step-by-step (the Paris trip example). Goal: Compare & Demonstrate Change. Viz/Presentation Method: An interactive prompt builder combined with a dynamic Bar Chart (Chart.js/Canvas). Interaction: As the user clicks "next step," a new component from the CRITICAL formula is added to the prompt, and the bar chart visually updates to show a "Quality Score" increase. Justification: This provides powerful, immediate visual feedback on the impact of each element, making the lesson far more effective than just reading text.
+        - Report Info: The CRITICAL formula components. Goal: Organize & Engage. Viz/Presentation Method: An interactive grid of cards (HTML/Tailwind/JS). Interaction: Clicking on a card reveals a detailed explanation for that component. Justification: This "discovery" interaction is more engaging than a static list and helps break down the complex formula into digestible pieces.
+        - Report Info: Basic concepts and techniques. Goal: Inform. Viz/Presentation Method: Styled content cards with clear icons and typography. Justification: Enhances readability and creates a clean, professional learning environment.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #292524; /* stone-800 */
+            scroll-behavior: smooth;
+        }
+        .stepper-item.active .stepper-circle {
+            background-color: #f97316; /* orange-500 */
+            color: white;
+            font-weight: bold;
+            transform: scale(1.1);
+        }
+        .stepper-item.active .stepper-label {
+            color: #f97316; /* orange-500 */
+            font-weight: 700;
+        }
+        .stepper-line {
+            height: 2px;
+            background-color: #d6d3d1; /* stone-300 */
+        }
+        .card-flip {
+            perspective: 1000px;
+        }
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.75rem;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 45vh;
+            max-height: 350px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Stepper Navigation -->
+    <header class="sticky top-0 z-10 bg-white/80 backdrop-blur-md shadow-sm p-4">
+        <div class="max-w-5xl mx-auto">
+            <h1 class="text-center text-2xl font-extrabold text-stone-800 mb-4">روز اول: مبانی پرامپت‌نویسی</h1>
+            <div id="stepper-nav" class="flex justify-between items-center">
+                <a href="#hour1" class="stepper-item flex-1 text-center" data-hour="1">
+                    <div class="stepper-circle w-10 h-10 mx-auto rounded-full bg-stone-200 flex items-center justify-center text-lg font-bold text-stone-600 transition-all duration-300">۱</div>
+                    <p class="stepper-label text-sm mt-2 font-semibold text-stone-500 transition-colors duration-300">آشنایی</p>
+                </a>
+                <div class="stepper-line flex-1"></div>
+                <a href="#hour2" class="stepper-item flex-1 text-center" data-hour="2">
+                    <div class="stepper-circle w-10 h-10 mx-auto rounded-full bg-stone-200 flex items-center justify-center text-lg font-bold text-stone-600 transition-all duration-300">۲</div>
+                    <p class="stepper-label text-sm mt-2 font-semibold text-stone-500 transition-colors duration-300">کالبدشکافی</p>
+                </a>
+                <div class="stepper-line flex-1"></div>
+                <a href="#hour3" class="stepper-item flex-1 text-center" data-hour="3">
+                    <div class="stepper-circle w-10 h-10 mx-auto rounded-full bg-stone-200 flex items-center justify-center text-lg font-bold text-stone-600 transition-all duration-300">۳</div>
+                    <p class="stepper-label text-sm mt-2 font-semibold text-stone-500 transition-colors duration-300">تکنیک‌ها</p>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto p-4 md:p-8">
+        
+        <!-- Hour 1 -->
+        <section id="hour1" class="mb-16 pt-16 -mt-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-stone-800">ساعت اول: آشنایی با دنیای هوش مصنوعی</h2>
+                <p class="mt-4 text-lg text-stone-600">در این بخش، ذهنیت خود را برای صحبت با یک ماشین هوشمند آماده می‌کنیم.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-stone-200">
+                    <h3 class="text-xl font-bold text-orange-600 mb-3">۱. هوش مصنوعی، یک همکار تحت‌اللفظی</h3>
+                    <p class="text-stone-700 mb-4">تصور کنید یک کارآموز فوق‌العاده باهوش دارید که تمام اطلاعات دنیا را می‌داند، اما هیچ درک شهودی ندارد. او دقیقاً و فقط کاری را انجام می‌دهد که شما می‌گویید. وظیفه شما این است که با دادن سرنخ‌های درست، او را هدایت کنید.</p>
+                    <div class="bg-red-50 border-r-4 border-red-400 p-4 rounded-lg text-red-800">
+                        <p class="font-bold">دستور ضعیف:</p>
+                        <p>"درباره سیب بگو."</p>
+                    </div>
+                    <div class="bg-green-50 border-r-4 border-green-500 p-4 rounded-lg mt-3 text-green-800">
+                        <p class="font-bold">دستور خوب:</p>
+                        <p>"خواص تغذیه‌ای سیب را برای یک ورزشکار توضیح بده."</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-stone-200">
+                    <h3 class="text-xl font-bold text-orange-600 mb-3">۲. قانون طلایی پرامپت</h3>
+                    <p class="text-stone-700 mb-4">پرامپت، دستورالعمل شماست. هرچه واضح‌تر، دقیق‌تر و کامل‌تر باشد، نتیجه‌ی بهتری دریافت می‌کنید. به یاد داشته باشید:</p>
+                    <blockquote class="text-center font-bold text-2xl text-stone-700 bg-stone-100 p-6 rounded-lg border border-stone-200 italic">
+                        "آشغال ورودی = آشغال خروجی"
+                    </blockquote>
+                    <p class="text-stone-700 mt-4">قبل از نوشتن، از خود بپرسید: "اگر این دستور را به یک انسان غریبه بدهم، آیا دقیقاً متوجه منظور من می‌شود؟"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hour 2 -->
+        <section id="hour2" class="mb-16 pt-16 -mt-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-stone-800">ساعت دوم: کالبدشکافی یک پرامپت بی‌نقص</h2>
+                <p class="mt-4 text-lg text-stone-600">با فرمول CRITICAL، یاد می‌گیریم چگونه یک پرامپت حرفه‌ای را جزء به جزء بسازیم.</p>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-center mb-6 text-stone-700">فرمول CRITICAL: روی هر کارت کلیک کنید</h3>
+            <div id="critical-cards" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+                <!-- Cards will be injected by JS -->
+            </div>
+            
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl border border-stone-200">
+                <h3 class="text-2xl font-bold text-center mb-2 text-stone-800">کارگاه عملی: ساخت پرامپت سفر به پاریس</h3>
+                <p class="text-center text-stone-600 mb-6">ببینید چگونه با اضافه کردن هر بخش از فرمول CRITICAL، کیفیت پرامپت به شکل چشمگیری افزایش می‌یابد.</p>
+                
+                <div class="flex flex-col lg:flex-row gap-8 items-center">
+                    <div class="w-full lg:w-1/2">
+                        <div id="prompt-builder-output" class="bg-stone-50 p-4 rounded-lg min-h-[150px] text-stone-700 border border-stone-200 transition-all duration-300">
+                            <!-- Prompt text will be built here -->
+                        </div>
+                        <button id="prompt-builder-btn" class="w-full mt-4 bg-orange-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-300">شروع و مرحله بعد</button>
+                    </div>
+                    <div class="w-full lg:w-1/2">
+                        <div class="chart-container">
+                            <canvas id="prompt-quality-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hour 3 -->
+        <section id="hour3" class="mb-16 pt-16 -mt-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-stone-800">ساعت سوم: تکنیک‌های ضروری و تمرین نهایی</h2>
+                <p class="mt-4 text-lg text-stone-600">حالا که ساختار را بلدیم، چند تکنیک پیشرفته‌تر را یاد می‌گیریم.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+                 <div class="bg-white p-6 rounded-xl shadow-lg border border-stone-200">
+                    <h3 class="text-xl font-bold text-orange-600 mb-3">Zero-Shot Prompting</h3>
+                    <p class="text-stone-700">دادن یک دستور مستقیم بدون ارائه مثال. این همان چیزی است که تا الان به صورت پایه یاد گرفتیم. برای وظایف ساده و مشخص کاملاً کارآمد است.</p>
+                 </div>
+                 <div class="bg-white p-6 rounded-xl shadow-lg border border-stone-200">
+                    <h3 class="text-xl font-bold text-orange-600 mb-3">Few-Shot Prompting</h3>
+                    <p class="text-stone-700 mb-3">شما قبل از دستور اصلی، چند مثال به هوش مصنوعی می‌دهید تا الگو را یاد بگیرد.</p>
+                    <div class="bg-stone-100 p-3 rounded-lg text-sm text-stone-600">
+                        <p>مثال: «جمله: هوا عالی است -> احساس: مثبت»</p>
+                        <p>«جمله: من از این فیلم متنفرم -> احساس: منفی»</p>
+                        <p>حالا شما ادامه می‌دهید...</p>
+                    </div>
+                 </div>
+                 <div class="bg-white p-6 rounded-xl shadow-lg border border-stone-200">
+                    <h3 class="text-xl font-bold text-orange-600 mb-3">Chain of Thought (CoT)</h3>
+                    <p class="text-stone-700">از هوش مصنوعی بخواهید قبل از جواب دادن، "مرحله به مرحله فکر کند". این کار برای حل مسائل پیچیده و ریاضی معجزه می‌کند. کافیست عبارت «قدم به قدم توضیح بده» را اضافه کنید.</p>
+                 </div>
+            </div>
+             <div class="bg-amber-50 text-amber-900 p-6 rounded-xl shadow-lg mt-10 border-r-4 border-amber-400">
+                <h3 class="text-2xl font-bold mb-4">تمرین نهایی روز اول</h3>
+                <p class="mb-3"><strong>سناریو:</strong> شما می‌خواهید یک محصول جدید (مثلاً یک "نوشیدنی انرژی‌زای گیاهی") را در اینستاگرام معرفی کنید.</p>
+                <p><strong>وظیفه:</strong> با استفاده کامل از فرمول <strong>CRITICAL</strong>، یک پرامپت بی‌نقص بنویسید که از هوش مصنوعی بخواهد <strong>سه ایده برای پست اینستاگرام</strong> (شامل متن کپشن و پیشنهاد تصویر) برای این محصول به شما بدهد. (نقش، لحن، مخاطب و محدودیت‌ها را فراموش نکنید).</p>
+            </div>
+        </section>
+
+    </main>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const criticalData = [
+        { key: 'C', title: 'Context (زمینه)', desc: 'شما کی هستید و چرا این سوال را می‌پرسید؟ مثال: "من یک معلم کلاس سوم هستم..."' },
+        { key: 'R', title: 'Role (نقش)', desc: 'از هوش مصنوعی بخواهید چه نقشی را بازی کند. مثال: "تو یک نویسنده علمی-تخیلی هستی..."' },
+        { key: 'I', title: 'Instruction (دستور)', desc: 'فعل اصلی و وظیفه‌ی شما. مثال: "بنویس"، "خلاصه کن"، "لیستی تهیه کن"' },
+        { key: 'T', title: 'Tone (لحن)', desc: 'خروجی باید چه حسی داشته باشد؟ مثال: "با لحنی دوستانه و صمیمی"، "کاملاً رسمی"' },
+        { key: 'I', title: 'Input Data (داده)', desc: '(اختیاری) اگر متنی برای تحلیل دارید، ارائه دهید. مثال: "با توجه به این متن..."' },
+        { key: 'C', title: 'Constraints (محدودیت)', desc: 'چه کارهایی را نباید انجام دهد؟ مثال: "بیشتر از ۱۰۰ کلمه نباشد"' },
+        { key: 'A', title: 'Audience (مخاطب)', desc: 'این خروجی برای چه کسی است؟ مثال: "طوری بگو که کودک ۱۰ ساله بفهمد"' },
+        { key: 'L', title: 'Language/Format (قالب)', desc: 'خروجی نهایی چه شکلی باشد؟ مثال: "در قالب یک جدول با دو ستون ارائه بده"' }
+    ];
+
+    const criticalCardsContainer = document.getElementById('critical-cards');
+    criticalData.forEach(item => {
+        const cardHTML = `
+            <div class="card-flip h-28 cursor-pointer group">
+                <div class="card-flip-inner">
+                    <div class="card-face card-front bg-white shadow-md border border-stone-200 group-hover:shadow-lg transition-shadow">
+                        <span class="text-3xl font-extrabold text-orange-500">${item.key}</span>
+                        <span class="text-lg font-bold text-stone-700 mt-1">${item.title.split(' ')[0]}</span>
+                    </div>
+                    <div class="card-face card-back bg-orange-500 text-white p-3 text-center">
+                        <p class="text-sm font-semibold">${item.desc}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        criticalCardsContainer.innerHTML += cardHTML;
+    });
+
+    document.querySelectorAll('.card-flip').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+        });
+    });
+
+    // Prompt Builder and Chart Logic
+    const promptBuilderBtn = document.getElementById('prompt-builder-btn');
+    const promptOutput = document.getElementById('prompt-builder-output');
+    let currentStep = 0;
+    const promptSteps = [
+        { text: "برای من یک برنامه سفر به پاریس بنویس.", quality: 10, label: "پرامپت ضعیف" },
+        { text: "من یک زوج جوان هستم و برای ماه عسل می‌خواهیم به پاریس سفر کنیم. برای ما یک برنامه سفر بنویس.", quality: 40, label: "+ زمینه و مخاطب" },
+        { text: "تو یک راهنمای تور متخصص در سفرهای رمانتیک هستی. برای یک زوج جوان که برای ماه عسل به پاریس می‌روند، یک برنامه سفر ۳ روزه بنویس. بودجه ما محدود است.", quality: 75, label: "+ نقش و محدودیت" },
+        { text: "تو یک راهنمای تور متخصص در سفرهای رمانتیک هستی. با لحنی هیجان‌انگیز و دوستانه، برای یک زوج جوان که برای ماه عسل به پاریس می‌روند، یک برنامه سفر ۳ روزه بنویس. بودجه ما محدود است، پس روی فعالیت‌های رایگان یا ارزان تمرکز کن. برنامه را در قالب یک جدول ارائه بده.", quality: 100, label: "+ لحن و قالب" }
+    ];
+    let chart;
+
+    function createOrUpdateChart(data, labels) {
+        const ctx = document.getElementById('prompt-quality-chart').getContext('2d');
+        if (chart) {
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = data;
+            chart.update();
+        } else {
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'کیفیت پرامپت',
+                        data: data,
+                        backgroundColor: '#fb923c', // orange-400
+                        borderColor: '#f97316', // orange-500
+                        borderWidth: 1,
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { display: false }
+                        },
+                        y: {
+                           ticks: { font: { family: "'Vazirmatn', sans-serif" } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: false
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    promptBuilderBtn.addEventListener('click', () => {
+        promptOutput.textContent = promptSteps[currentStep].text;
+        
+        const data = promptSteps.slice(0, currentStep + 1).map(p => p.quality);
+        const labels = promptSteps.slice(0, currentStep + 1).map(p => p.label);
+        createOrUpdateChart(data, labels);
+
+        currentStep++;
+        if (currentStep >= promptSteps.length) {
+            currentStep = 0;
+            promptBuilderBtn.textContent = 'شروع مجدد';
+        } else {
+            promptBuilderBtn.textContent = 'مرحله بعد';
+        }
+    });
+
+    // Stepper Navigation Logic
+    const sections = document.querySelectorAll('section');
+    const stepperItems = document.querySelectorAll('.stepper-item');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const hour = entry.target.id.replace('hour', '');
+                stepperItems.forEach(item => {
+                    item.classList.toggle('active', item.dataset.hour === hour);
+                });
+            }
+        });
+    }, { rootMargin: "-50% 0px -50% 0px" });
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+    // Initialize first step
+    promptBuilderBtn.click();
+});
+</script>
+</body>
+</html>
